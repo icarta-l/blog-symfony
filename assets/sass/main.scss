@@ -1,7 +1,25 @@
-h1 {
-	color: purple;
-	text-decoration: underline;
-	font-weight: 400;
-	font-style: italic;
-	text-transform: uppercase;
-}
+// Import variables and mixins.
+@import "abstracts/abstracts";
+
+/*--------------------------------------------------------------
+# Base
+--------------------------------------------------------------*/
+@import "base/reset";
+@import "base/base";
+@import "base/typography";
+
+/*--------------------------------------------------------------
+# Layouts
+--------------------------------------------------------------*/
+@import "layouts/header";
+@import "layouts/navigation";
+
+/*--------------------------------------------------------------
+# Components
+--------------------------------------------------------------*/
+//@import "components/components";
+
+/*--------------------------------------------------------------
+# Pages
+--------------------------------------------------------------*/
+@import "pages/register";

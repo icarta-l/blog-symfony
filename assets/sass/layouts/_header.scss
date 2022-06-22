@@ -1,0 +1,12 @@
+.row-header {
+	background-color: $main_color;
+
+	.cont {
+		padding-top: 24px;
+		padding-bottom: 23px;
+		display: grid;
+		grid-template-columns: max-content 1fr;
+		column-gap: 50px;
+		color: $secondary_color;
+	}
+}

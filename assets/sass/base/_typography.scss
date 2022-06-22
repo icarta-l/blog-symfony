@@ -1,0 +1,28 @@
+/* Typography - Font Family */
+
+body {
+	font-family: "Roboto", sans-serif;
+}
+
+/* Typography - Colors */
+
+.main-navigation-link, .blog-link, .title {
+	color: $secondary_color;
+}
+
+/* Typography - Font Weight */
+
+.blog-link, .title {
+	font-weight: 500;
+}
+
+/* Typography - Font Style */
+
+.main-navigation-link, .blog-link {
+	text-decoration: none;
+}
+
+.blog-link, .title {
+	text-transform: uppercase;
+}
+

@@ -1,0 +1,32 @@
+@mixin font-size-and-line-height ($font, $line-height) {
+	font-size: ($font / 16) * 1rem;
+	line-height: ($line-height / $font);
+}
+
+@mixin font-size-and-line-height-responsive ($font-min, $font-max, $line-height-min, $line-height-max, $media-query-reference, $media-query-reference-max) {
+	$media-query-reference-string: '"' + $media-query-reference + '"';
+	font-size: ($font-max / 16) * 1rem;
+	line-height: ($line-height-max / $font-max);
+
+	@media (max-width: map-get($breakpoints, $media-query-reference-string) * 1px) {
+		font-size: ($font-min / 16) * 1rem;
+		line-height: ($line-height-min / $font-min);
+	}
+}
+
+@mixin font-size-and-line-height-fluid ($font-min, $font-max, $line-height-min, $line-height-max, $media-query-reference, $media-query-reference-max, $media-query-reference-between: false) {
+	$media-query-reference-string: '"' + $media-query-reference + '"';
+	$media-query-reference-max-string: '"' + $media-query-reference-max + '"';
+	line-height: ($line-height-max / $font-max);
+
+	@if $media-query-reference-between == false {
+		@include responsive-fluid-property(font-size, $font-min, $font-max, map-get($breakpoints, $media-query-reference-string), map-get($breakpoints, $media-query-reference-max-string));
+	} @else {
+		$media-query-reference-between-string: '"' + $media-query-reference-between + '"';
+		@include responsive-fluid-property(font-size, $font-min, $font-max, map-get($breakpoints, $media-query-reference-string), map-get($breakpoints, $media-query-reference-max-string), map-get($breakpoints, $media-query-reference-between-string));
+	}
+
+	@media (max-width: map-get($breakpoints, $media-query-reference-string) * 1px) {
+		line-height: ($line-height-min / $font-min);
+	}
+}

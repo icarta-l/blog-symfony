@@ -37,7 +37,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 	/**
 	 * @ORM\Column(type="json")
 	 */
-	private $role = [];
+	private $roles = [];
 
 	public function getId(): ?int
 	{

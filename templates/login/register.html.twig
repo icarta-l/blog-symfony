@@ -1,5 +1,10 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-	<h1>This is the register page!</h1>
+	<section class="row row-register">
+		<div class="cont">
+			<h1 class="title">Register</h1>
+			{{ form(form) }}
+		</div>
+	</section>
 {% endblock %}
