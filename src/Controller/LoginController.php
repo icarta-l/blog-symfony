@@ -8,28 +8,41 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Doctrine\Persistence\ManagerRegistry;
 
-/**
- * 
- */
+
 class LoginController extends AbstractController
 {
 	/**
 	 * @Route("/register", name="register")
 	 */
-	public function register(Request $request): Response
+	public function register(Request $request, UserPasswordHasherInterface $passwordHasher, ManagerRegistry $doctrine): Response
 	{
 		$form = $this->createForm(UserType::class);
 
 		$form->handleRequest($request);
 
 		if ($form->isSubmitted() && $form->isValid()) {
-			dump("Form data");
-			dump($form->getData());
+			$user = $form->getData();
+			$hashedPassword = $passwordHasher->hashPassword($user, $user->getPassword());
+			$user->setPassword($hashedPassword);
+
+			$repository = $doctrine->getRepository(User::class);
+
+			if ($repository->findOneBy(["username" => $user->getUsername()]) === null) {
+				$entityManager = $doctrine->getManager();
+				$entityManager->persist($user);
+				$entityManager->flush();
+
+			} else {
+				$user_exists = true;
+			}
 		}
 
 		return $this->renderForm("login/register.html.twig", [
-			"form" => $form
+			"form" => $form,
+			"user_exists" => (isset($user_exists) && $user_exists === true) ? $user_exists : false
 		]);
 	}
 }

@@ -12,6 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\CallbackTransformer;
 
 class UserType extends AbstractType
 {
@@ -29,6 +30,16 @@ class UserType extends AbstractType
 			"multiple" => false
 		])
 		->add("save", SubmitType::class, ["label" => "Register User"]);
+
+		$builder->get("roles")
+		->addModelTransformer(new CallbackTransformer(
+			function ($rolesAsArray) {
+				return $rolesAsArray;
+			},
+			function ($rolesAsString) {
+				return [$rolesAsString];
+			}
+		));
 	}
 
 	public function configureOptions(OptionsResolver $resolver): void

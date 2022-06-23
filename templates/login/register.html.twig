@@ -4,6 +4,9 @@
 	<section class="row row-register">
 		<div class="cont">
 			<h1 class="title">Register</h1>
+			{% if user_exists %}
+				<h2>User Already Exists!</h2>
+			{% endif %}
 			{{ form(form) }}
 		</div>
 	</section>
