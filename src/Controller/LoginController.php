@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 
 class LoginController extends AbstractController
@@ -43,6 +44,21 @@ class LoginController extends AbstractController
 		return $this->renderForm("login/register.html.twig", [
 			"form" => $form,
 			"user_exists" => (isset($user_exists) && $user_exists === true) ? $user_exists : false
+		]);
+	}
+
+	/**
+	 * @Route("/login", name="login") 
+	 */
+	public function login(AuthenticationUtils $authenticationUtils): Response
+	{
+		$error = $authenticationUtils->getLastAuthenticationError();
+
+		$lastUsername = $authenticationUtils->getLastUsername();
+
+		return $this->render("login/index.html.twig", [
+			"last_username" => $lastUsername,
+			"error" => $error
 		]);
 	}
 }

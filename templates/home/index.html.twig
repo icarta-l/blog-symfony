@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+	<section class="row row-home">
+		<div class="cont">
+			<h1 class="title">Homepage</h1>
+			{% if user %}
+				<p>Welcome back {{ user.username }}!</p>
+			{% else %}
+				<p>No one is logged in!</p>
+			{% endif %}
+		</div>
+	</section>
+{% endblock %}
