@@ -6,38 +6,36 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
-/**
- * @ORM\Entity()
- */
+#[ORM\Entity()]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-	/**
-	 * @ORM\Id
-	 * @ORM\GeneratedValue
-	 * @ORM\Column(type="integer")
-	 */
-	private $id;
+	#[ORM\Id]
+	#[ORM\GeneratedValue]
+	#[ORM\Column]
+	private int $id;
 
-	/**
-	 * @ORM\Column(type="string", unique=true)
-	 */
-	private $username;
+	#[ORM\Column(unique: true)]
+	private string $username;
 
-	/**
-	 * @ORM\Column(type="string")
-	 */
-	private $password;
+	#[ORM\Column]
+	private string $password;
 
-	/**
-	 * @ORM\Column(type="string", unique=true)
-	 */
-	private $email;
+	#[ORM\Column(unique: true)]
+	private string $email;
 
-	/**
-	 * @ORM\Column(type="json")
-	 */
+	#[ORM\Column(type: "json")]
 	private $roles = [];
+
+	#[ORM\OneToMany(targetEntity: Post::class, mappedBy: "users")]
+	private $posts;
+
+	public function __construct()
+	{
+		$this->posts = new ArrayCollection();
+	}
 
 	public function getId(): ?int
 	{
@@ -104,5 +102,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 	public function eraseCredentials()
 	{
 		
+	}
+
+	/**
+	 * @return Collection|Post[]
+	 */
+	public function getPosts(): Collection
+	{
+		return $this->posts;
+	}
+
+	public function addPost(Post $post): void
+	{
+		$this->posts->add($post);
+	}
+
+	public function removePost(Post $post): void
+	{
+		$this->posts->removeElement($post);
 	}
 }

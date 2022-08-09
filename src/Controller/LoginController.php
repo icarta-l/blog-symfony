@@ -28,6 +28,7 @@ class LoginController extends AbstractController
 			$user = $form->getData();
 			$hashedPassword = $passwordHasher->hashPassword($user, $user->getPassword());
 			$user->setPassword($hashedPassword);
+			dump($user);
 
 			$repository = $doctrine->getRepository(User::class);
 
