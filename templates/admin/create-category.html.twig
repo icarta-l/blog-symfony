@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+	<section class="row row-category">
+		<div class="cont">
+			<h1 class="title">Create Category</h1>
+			{% if category_exists %}
+				<h2>Category Already Exists!</h2>
+			{% endif %}
+			{{ form(form) }}
+		</div>
+	</section>
+{% endblock %}

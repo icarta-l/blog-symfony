@@ -29,7 +29,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 	#[ORM\Column(type: "json")]
 	private $roles = [];
 
-	#[ORM\OneToMany(targetEntity: Post::class, mappedBy: "users")]
+	#[ORM\OneToMany(targetEntity: Post::class, mappedBy: "author")]
 	private $posts;
 
 	public function __construct()

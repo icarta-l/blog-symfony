@@ -4,22 +4,39 @@
 			<a href="{{ path("home") }}" class="blog-link">My Blog</a>
 		</div>
 		<nav class="main-navigation">
-			{% set links = [ 
-			{"name": "Login", "route": "login"},
-			{"name": "Register", "route": "register"},
-			{"name": "Archive", "route": false}
-			] %}
-
-			{% for link in links %}
-				{% if link.route %}
-					<a href="{{ path(link.route) }}" class="main-navigation-link">{{ link.name }}</a>
-				{% else %}
-					<span>{{ link.name }}</span>
+			{% set links = [] %}
+				{% if user is not defined or user == false %}
+					{% set links = links|merge(
+					[
+					{"name": "Login", "route": "login"},
+					{"name": "Register", "route": "register"}
+					]) %}
 				{% endif %}
-			{% endfor %}
-			{% if user is defined and user %}
-				<a href="/logout" class="main-navigation-link">Logout</a>
-			{% endif %}
-		</nav>
-	</div>
-</header>
+				{% set links = links|merge([
+				{"name": "Posts", "route": false}
+				]) %}
+
+				{% if user is defined and user and "ROLE_ADMIN" in user.roles %}
+					{% set links = links|merge([
+					{"name": "Admin", "route": false}
+					]) %}
+				{% endif %}
+
+				{% if user is defined and user %}
+					{% set links = links|merge([
+					{"name": "Logout", "route": "/logout"}
+					]) %}
+				{% endif %}
+
+				{% for link in links %}
+					{% if link.route == "/logout" %}
+						<a href="{{ logout_path() }}" class="main-navigation-link">{{ link.name }}</a>
+					{% elseif link.route %}
+						<a href="{{ path(link.route) }}" class="main-navigation-link">{{ link.name }}</a>
+					{% else %}
+						<span>{{ link.name }}</span>
+					{% endif %}
+				{% endfor %}
+			</nav>
+		</div>
+	</header>
