@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+	<section class="row row-posts">
+		<div class="cont">
+			<h1 class="title">All Posts</h1>
+			{% for post in posts %}
+				<a href="/blog/post/{{ post.slug }}" class="post">
+					<h3 class="post__title">{{ post.title }}</h3>
+					<div class="post__categories">
+						{% for category in post.categories %}
+							<span class="post_category">{{ category.title }}</span>
+						{% endfor %}
+					</div>
+					<p class="post__author"></p>
+					<p class="post__date">{{ post.publishedAt }}</p>
+					<p class="post__content">{{ post.content }}</p>
+				</a>
+			{% endfor %}
+		</div>
+	</section>
+{% endblock %}

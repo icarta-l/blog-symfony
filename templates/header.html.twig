@@ -13,7 +13,7 @@
 					]) %}
 				{% endif %}
 				{% set links = links|merge([
-				{"name": "Posts", "route": false}
+				{"name": "Posts", "route": "print_all_posts"}
 				]) %}
 
 				{% if user is defined and user and "ROLE_ADMIN" in user.roles %}

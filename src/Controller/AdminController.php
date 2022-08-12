@@ -17,6 +17,8 @@ class AdminController extends AbstractController
 	{
 		$this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'User tried to access a page without having ROLE_ADMIN');
 
+		$user = $this->getUser();
+
 		$form = $this->createForm(CategoryType::class);
 
 		$form->handleRequest($request);
@@ -36,7 +38,8 @@ class AdminController extends AbstractController
 		
 		return $this->renderForm("admin/create-category.html.twig", [
 			"form" => $form,
-			"category_exists" => (isset($category_exists) && $category_exists === true) ? $category_exists : false
+			"category_exists" => (isset($category_exists) && $category_exists === true) ? $category_exists : false,
+			"user" => $user
 		]);
 	}
 }

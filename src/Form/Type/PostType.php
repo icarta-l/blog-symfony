@@ -11,20 +11,22 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use App\Form\Type\CategoryType;
 
 class PostType extends AbstractType
 {
-	public function buildForm(FormBuilderInterface $builder, array $options, ManagerRegistry $doctrine): void
+	public function buildForm(FormBuilderInterface $builder, array $options): void
 	{
-		$repository = $doctrine->getRepository(Category::class);
-		$categories = $repository->findAll();
-
 		$builder->add("title", TextType::class)
 		->add("summary", TextareaType::class)
-		->add("categories", ChoiceType::class, [
-			"choices" => $categories,
-			"choice_value" => "title"
+		->add("categories", EntityType::class, [
+			"class" => Category::class,
+			"choice_label" => "title",
+			"multiple" => true,
+			"expanded" => true
+
 		])
 		->add("content", TextareaType::class)
 		->add("save", SubmitType::class, ["label" => "Publish"]);

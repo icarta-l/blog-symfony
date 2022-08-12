@@ -134,7 +134,7 @@ class Post
 
 	public function getPublishedAt(): string
 	{
-		$this->publishedAt;
+		return $this->publishedAt->format("Y-m-d H:i:s");
 	}
 
 	public function setPublishedAt(\DateTimeInterface $datetime): self

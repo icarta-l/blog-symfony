@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+	<section class="row row-post">
+		<div class="cont">
+			<h1 class="title">{{ post.title }}</h1>
+			<div class="categories">
+				{% for category in post.categories %}
+					<span class="category">{{ category }}</span>
+				{% endfor %}
+			</div>
+		</div>
+	</section>
+{% endblock %}
