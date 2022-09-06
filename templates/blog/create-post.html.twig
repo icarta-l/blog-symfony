@@ -4,7 +4,14 @@
 	<section class="row row-post">
 		<div class="cont">
 			<h1 class="title">Create Post</h1>
-			{{ form(form) }}
+			{% if post is defined %}
+				<div class="post-successfully-published">
+					<h3>Success! Your post was published.</h3>
+				</div>
+			{% endif %}
+			{% if post is not defined or post == false %}
+				{{ form(form) }}
+			{% endif %}
 		</div>
 	</section>
 {% endblock %}

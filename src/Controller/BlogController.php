@@ -9,12 +9,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Doctrine\Persistence\ManagerRegistry;
 
 class BlogController extends AbstractController
 {
 	#[Route("/blog/post/new", name: "create_post")]
-	public function createPost(Request $request, ManagerRegistry $doctrine): Response
+	public function createPost(Request $request, ManagerRegistry $doctrine): Response|RedirectResponse
 	{
 		$this->denyAccessUnlessGranted('ROLE_USER');
 
@@ -35,12 +36,20 @@ class BlogController extends AbstractController
 			$entityManager = $doctrine->getManager();
 			$entityManager->persist($post);
 			$entityManager->flush();
+
+			return $this->redirectToRoute("post_successfully_created");
 		}
 
 		return $this->renderForm("blog/create-post.html.twig", [
 			"form" => $form,
 			"user" => $user
 		]);
+	}
+
+	#[Route("blog/post/new/success", name: "post_successfully_created")]
+	public function postSuccessfullyCreated(Request $request, ManagerRegistry $doctrine): Response
+	{
+		return $this->render("blog/create-post-success.html.twig");
 	}
 
 	#[Route("/blog", name: "print_all_posts")]
