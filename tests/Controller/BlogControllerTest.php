@@ -6,23 +6,28 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use App\Tests\Tools\BaseSetupForWebTests;
+use App\Tests\Tools\PostWriter;
 use App\Entity\Post;
 
 class BlogControllerTest extends WebTestCase
 {
 	use BaseSetupForWebTests;
+	use PostWriter;
 
-	private string $validPostTitle = "Test";
+	private string $postCreationRouteName = "create_post";
 
+	/**
+	 * Tests for "create_post" route
+	 */
 	public function testCreatePostIsNotAllowedIfNotLoggedIn(): void
 	{
-		$this->client->request(Request::METHOD_GET, $this->urlGenerator->generate("create_post"));
+		$this->client->request(Request::METHOD_GET, $this->urlGenerator->generate($this->postCreationRouteName));
 		$this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
 	}
 
 	public function testCreatePostRedirectsToLoginPage(): void
 	{
-		$this->client->request(Request::METHOD_GET, $this->urlGenerator->generate("create_post"));
+		$this->client->request(Request::METHOD_GET, $this->urlGenerator->generate($this->postCreationRouteName));
 		$crawler = $this->client->followRedirect();
 		$this->assertSame("login", \basename($crawler->getUri()));
 	}
@@ -30,16 +35,15 @@ class BlogControllerTest extends WebTestCase
 	public function testCreatePostPageIsUp(): void
 	{
 		$this->setUpUser();
-		$this->client->request(Request::METHOD_GET, $this->urlGenerator->generate("create_post"));
+		$this->client->request(Request::METHOD_GET, $this->urlGenerator->generate($this->postCreationRouteName));
 		$this->assertResponseStatusCodeSame(Response::HTTP_OK);
 	}
 
 	public function testCreatePostWorks(): void
 	{
 		$this->setUpUser();
-		$crawler = $this->client->request(Request::METHOD_GET, $this->urlGenerator->generate("create_post"));
-		$form = $crawler->selectButton("Publish")->form();
-		$this->fillCreatePostFormWithValidData($form);
+		$form = $this->getPostCreationForm();
+		$this->fillPostFormWithValidData($form);
 		$this->client->submit($form);
 		$crawler = $this->client->followRedirect();
 		$this->assertSame(1, $crawler->filterXPath('//div[@class="post-successfully-published"]')->count());
@@ -48,23 +52,45 @@ class BlogControllerTest extends WebTestCase
 	public function testCreatePostRedirectsAfterSubmitting(): void
 	{
 		$this->setUpUser();
-		$crawler = $this->client->request(Request::METHOD_GET, $this->urlGenerator->generate("create_post"));
-		$form = $crawler->selectButton("Publish")->form();
-		$this->fillCreatePostFormWithValidData($form);
+		$form = $this->getPostCreationForm();
+		$this->fillPostFormWithValidData($form);
 		$this->client->submit($form);
 		$this->assertResponseStatusCodeSame(Response::HTTP_FOUND);	
 	}
 
-	private function setUpPostRepository(): void
+	public function testCreatePostFailsWithoutTitle(): void
 	{
-		$this->postRepository = $this->client->getContainer()->get("doctrine.orm.entity_manager")->getRepository(Post::class);
+		$this->setUpUser();
+		$form = $this->getPostCreationForm();
+		$this->fillPostFormWithoutTitle($form);
+		$this->client->submit($form);
+		$this->assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
 	}
 
-	private function fillCreatePostFormWithValidData(&$form)
+	public function testCreatePostFailsWithoutContent(): void
 	{
-		$form["post[title]"] = "Test";
-		$form["post[summary]"] = "A fake summary to publish the post";
-		$form["post[categories]"] = [1];
-		$form["post[content]"] = "Here is my fake new content to test the post publishing logic.";
+		$this->setUpUser();
+		$form = $this->getPostCreationForm();
+		$this->fillPostFormWithoutContent($form);
+		$this->client->submit($form);
+		$this->assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
+	}
+
+	public function testCreatePostFailsWithoutSummary(): void
+	{
+		$this->setUpUser();
+		$form = $this->getPostCreationForm();
+		$this->fillPostFormWithoutSummary($form);
+		$this->client->submit($form);
+		$this->assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
+	}
+
+	public function testCreatePostFailsWithoutCategories(): void
+	{
+		$this->setUpUser();
+		$form = $this->getPostCreationForm();
+		$this->fillPostFormWithoutCategories($form);
+		$this->client->submit($form);
+		$this->assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
 	}
 }

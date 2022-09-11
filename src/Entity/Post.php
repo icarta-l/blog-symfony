@@ -6,6 +6,7 @@ use App\Repository\PostRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity()]
 class Post
@@ -15,9 +16,11 @@ class Post
 	#[ORM\Column]
 	private int $id;
 
+	#[Assert\NotBlank]
 	#[ORM\Column]
 	private string $title;
 
+	#[Assert\NotBlank]
 	#[ORM\Column]
 	private string $content;
 
@@ -27,9 +30,14 @@ class Post
 	#[ORM\ManyToOne(targetEntity: User::class, inversedBy: "posts")]
 	private $author;
 
+	#[Assert\NotBlank]
 	#[ORM\Column]
 	private string $summary;
 
+	#[Assert\Count(
+	min: 1,
+	minMessage: "You must choose at least one category"
+	)]
 	#[ORM\ManyToMany(targetEntity: Category::class, inversedBy: "posts")]
 	private $categories;
 
