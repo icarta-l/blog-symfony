@@ -6,7 +6,7 @@
 			<h1 class="title">{{ post.title }}</h1>
 			<div class="categories">
 				{% for category in post.categories %}
-					<span class="category">{{ category }}</span>
+					<span class="category">{{ category.title }}</span>
 				{% endfor %}
 			</div>
 		</div>

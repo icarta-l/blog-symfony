@@ -58,8 +58,6 @@ class BlogController extends AbstractController
 		$repository = $doctrine->getRepository(Post::class);
 		$posts = $repository->findAll();
 
-		dump($posts);
-
 		return $this->render("blog/index.html.twig", [
 			"posts" => $posts
 		]);
@@ -70,10 +68,6 @@ class BlogController extends AbstractController
 	{
 		$repository = $doctrine->getRepository(Post::class);
 		$post = $repository->findOneBy(["slug" => $slug]);
-
-		dump($post);
-		dump($post->getCategories()->getValues());
-		dump($post->getAuthor());
 
 		return $this->render("blog/single-post.html.twig", [
 			"post" => $post

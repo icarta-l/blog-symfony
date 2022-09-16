@@ -15,6 +15,8 @@ class BlogControllerTest extends WebTestCase
 	use PostWriter;
 
 	private string $postCreationRouteName = "create_post";
+	private string $printAllPostRouteName = "print_all_posts";
+	private string $printSinglePostRouteName = "print_post";
 
 	/**
 	 * Tests for "create_post" route
@@ -92,5 +94,27 @@ class BlogControllerTest extends WebTestCase
 		$this->fillPostFormWithoutCategories($form);
 		$this->client->submit($form);
 		$this->assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
+	}
+
+	/**
+	 * Tests for "print_all_posts" route
+	 */
+	public function testBlogPageIsUp(): void
+	{
+		$this->client->request(Request::METHOD_GET, $this->urlGenerator->generate($this->printAllPostRouteName));
+		$this->assertResponseStatusCodeSame(Response::HTTP_OK);	
+	}
+
+	/**
+	 * Tests for "print_post" route
+	 */
+	public function testSinglePostPageIsUp(): void
+	{
+		$this->setUpUser();
+		$form = $this->getPostCreationForm();
+		$this->fillPostFormWithValidData($form);
+		$this->client->submit($form);
+		$this->client->request(Request::METHOD_GET, $this->urlGenerator->generate($this->printSinglePostRouteName, ["slug" => "test"]));
+		$this->assertResponseStatusCodeSame(Response::HTTP_OK);
 	}
 }
