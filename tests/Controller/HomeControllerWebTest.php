@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use App\Tests\Tools\BaseSetupForWebTests;
 
-class HomeControllerTest extends WebTestCase
+class HomeControllerWebTest extends WebTestCase
 {
 	use BaseSetupForWebTests;
 

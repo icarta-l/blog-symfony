@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Post;
+use App\Entity\User;
 use App\Entity\Category;
 use App\Form\Type\PostType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -11,9 +12,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Doctrine\Persistence\ManagerRegistry;
+use App\Tool\DatabaseHandler;
 
 class BlogController extends AbstractController
 {
+	use DatabaseHandler;
+
 	#[Route("/blog/post/new", name: "create_post")]
 	public function createPost(Request $request, ManagerRegistry $doctrine): Response|RedirectResponse
 	{
@@ -26,16 +30,7 @@ class BlogController extends AbstractController
 		$form->handleRequest($request);
 
 		if ($form->isSubmitted() && $form->isValid()) {
-			$post = $form->getData();
-
-			$post->setPublishedAt((new \DateTimeImmutable("now", new \DateTimeZone("Europe/Rome"))));
-			$post->setAuthor($user);
-			$slug = \strtolower(\str_replace(" ", "-", $post->getTitle()));
-			$post->setSlug($slug);
-
-			$entityManager = $doctrine->getManager();
-			$entityManager->persist($post);
-			$entityManager->flush();
+			$this->getPostDataAndRegisterInDatabase($form, $user, $doctrine);
 
 			return $this->redirectToRoute("post_successfully_created");
 		}
@@ -44,6 +39,21 @@ class BlogController extends AbstractController
 			"form" => $form,
 			"user" => $user
 		]);
+	}
+
+	private function getPostDataAndRegisterInDatabase($form, User $user, ManagerRegistry $doctrine): void
+	{
+		$post = $form->getData();
+		$this->setRemainingPostProperties($post, $user);
+		$this->registerEntity($doctrine, $post);
+	}
+
+	private function setRemainingPostProperties(Post $post, User $user): void
+	{
+		$post->setPublishedAt((new \DateTimeImmutable("now", new \DateTimeZone("Europe/Rome"))));
+		$post->setAuthor($user);
+		$slug = \strtolower(\str_replace(" ", "-", $post->getTitle()));
+		$post->setSlug($slug);
 	}
 
 	#[Route("blog/post/new/success", name: "post_successfully_created")]

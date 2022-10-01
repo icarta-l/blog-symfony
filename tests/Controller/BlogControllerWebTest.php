@@ -9,7 +9,7 @@ use App\Tests\Tools\BaseSetupForWebTests;
 use App\Tests\Tools\PostWriter;
 use App\Entity\Post;
 
-class BlogControllerTest extends WebTestCase
+class BlogControllerWebTest extends WebTestCase
 {
 	use BaseSetupForWebTests;
 	use PostWriter;

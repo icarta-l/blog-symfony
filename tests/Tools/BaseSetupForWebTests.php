@@ -5,7 +5,8 @@ namespace App\Tests\Tools;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use App\Entity\User;
 
-trait BaseSetupForWebTests {
+trait BaseSetupForWebTests 
+{
 	private ?KernelBrowser $client = null;
 
 	public function setUp(): void
