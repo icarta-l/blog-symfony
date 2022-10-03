@@ -151,4 +151,12 @@ class Post
 
 		return $this;
 	}
+
+	public function setRemainingProperties(User $user): void
+	{
+		$this->setPublishedAt((new \DateTimeImmutable("now", new \DateTimeZone("Europe/Rome"))));
+		$this->setAuthor($user);
+		$slug = \strtolower(\str_replace(" ", "-", $this->getTitle()));
+		$this->setSlug($slug);
+	}
 }

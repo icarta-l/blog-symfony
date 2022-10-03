@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Doctrine\Persistence\ManagerRegistry;
 use App\Tool\DatabaseHandler;
+use Symfony\Component\Form\FormInterface;
 
 class BlogController extends AbstractController
 {
@@ -41,19 +42,11 @@ class BlogController extends AbstractController
 		]);
 	}
 
-	private function getPostDataAndRegisterInDatabase($form, User $user, ManagerRegistry $doctrine): void
+	private function getPostDataAndRegisterInDatabase(FormInterface $form, User $user, ManagerRegistry $doctrine): void
 	{
 		$post = $form->getData();
-		$this->setRemainingPostProperties($post, $user);
+		$post->setRemainingProperties($user);
 		$this->registerEntity($doctrine, $post);
-	}
-
-	private function setRemainingPostProperties(Post $post, User $user): void
-	{
-		$post->setPublishedAt((new \DateTimeImmutable("now", new \DateTimeZone("Europe/Rome"))));
-		$post->setAuthor($user);
-		$slug = \strtolower(\str_replace(" ", "-", $post->getTitle()));
-		$post->setSlug($slug);
 	}
 
 	#[Route("blog/post/new/success", name: "post_successfully_created")]
