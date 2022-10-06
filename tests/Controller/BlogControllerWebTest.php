@@ -11,8 +11,7 @@ use App\Entity\Post;
 
 class BlogControllerWebTest extends WebTestCase
 {
-	use BaseSetupForWebTests;
-	use PostWriter;
+	use BaseSetupForWebTests, PostWriter;
 
 	private string $postCreationRouteName = "create_post";
 	private string $printAllPostRouteName = "print_all_posts";

@@ -22,14 +22,10 @@ class PostTest extends TestCase
 
 		$date_post = new \DateTimeImmutable($post->getPublishedAt(), new \DateTimeZone("Europe/Rome"));
 
-		$this->assertSame($date_test->format("Y"), $date_post->format("Y"));
-		$this->assertSame($date_test->format("m"), $date_post->format("m"));
-		$this->assertSame($date_test->format("d"), $date_post->format("d"));
-		$this->assertSame($date_test->format("H"), $date_post->format("H"));
-		$this->assertSame($date_test->format("i"), $date_post->format("i"));
+		$this->assertSame($date_test->format("Y-m-d H:i"), $date_post->format("Y-m-d H:i"));
 	}
 
-	public function testSetRemainingPropertiesReturnsError(): void
+	public function testSetRemainingPropertiesReturnsErrorOnWrongClass(): void
 	{
 		$post = new Post();
 		$this->expectException("TypeError");

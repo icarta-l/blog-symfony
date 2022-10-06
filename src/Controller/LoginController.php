@@ -8,6 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
@@ -20,7 +21,7 @@ class LoginController extends AbstractController
 	/**
 	 * @Route("/register", name="register")
 	 */
-	public function register(Request $request, UserPasswordHasherInterface $passwordHasher, ManagerRegistry $doctrine): Response
+	public function register(Request $request, UserPasswordHasherInterface $passwordHasher, ManagerRegistry $doctrine): Response|RedirectResponse
 	{
 		$form = $this->createForm(UserType::class);
 
@@ -28,6 +29,9 @@ class LoginController extends AbstractController
 
 		if ($form->isSubmitted() && $form->isValid()) {
 			$user_exists = $this->handleUserFormData($form, $doctrine, $passwordHasher);
+			if (!$user_exists) {
+				return $this->redirectToRoute("user_successfully_created");
+			}
 		}
 
 		return $this->renderForm("login/register.html.twig", [
@@ -42,7 +46,7 @@ class LoginController extends AbstractController
 		$repository = $doctrine->getRepository(User::class);
 
 		if ($repository->findOneBy(["username" => $user->getUsername()]) === null) {
-			$this->registerNewUserInDatabase($repository, $passwordHasher, $user, $doctrine);
+			$this->registerNewUserInDatabase($passwordHasher, $user, $doctrine);
 
 			return false;
 		} else {
@@ -50,7 +54,7 @@ class LoginController extends AbstractController
 		}
 	}
 
-	private function registerNewUserInDatabase(ObjectRepository $repository, UserPasswordHasherInterface $passwordHasher, User $user, ManagerRegistry $doctrine)
+	private function registerNewUserInDatabase(UserPasswordHasherInterface $passwordHasher, User $user, ManagerRegistry $doctrine): void
 	{
 		$hashedPassword = $passwordHasher->hashPassword($user, $user->getPassword());
 		$user->setPassword($hashedPassword);
@@ -58,6 +62,12 @@ class LoginController extends AbstractController
 		$entityManager = $doctrine->getManager();
 		$entityManager->persist($user);
 		$entityManager->flush();
+	}
+
+	#[Route("login/user/new/success", name: "user_successfully_created")]
+	public function userSuccessfullyCreated(Request $request): Response
+	{
+		return $this->render("login/create-user-success.html.twig");
 	}
 
 	/**
