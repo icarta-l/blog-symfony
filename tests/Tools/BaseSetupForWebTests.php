@@ -41,4 +41,13 @@ trait BaseSetupForWebTests
 		}
 		return $form;
 	}
+
+	private function fillFormWithFilter(Form $form, string $blacklisted_field, string $prefix): Form
+	{
+		if (in_array($blacklisted_field, $this->fields)) {
+			$key = array_search($blacklisted_field, $this->fields);
+			array_splice($this->fields, $key, 1);
+		}
+		return $this->fillForm($form, $prefix);
+	}
 }

@@ -14,14 +14,6 @@ trait PostWriter
 	private string $content = "Here is my fake new content to test the post publishing logic";
 	private array $fields = ["title", "summary", "categories", "content"];
 
-	private function fillFormWithFilter(Form $form, string $blacklisted_field): Form
-	{
-		if (in_array($blacklisted_field, $this->fields)) {
-			$key = array_search($blacklisted_field, $this->fields);
-			array_splice($this->fields, $key, 1);
-		}
-		return $this->fillForm($form, "post");
-	}
 
 	private function getPostCreationForm(): Form
 	{
@@ -30,22 +22,22 @@ trait PostWriter
 
 	private function fillPostFormWithoutCategories(Form $form): void
 	{
-		$form = $this->fillFormWithFilter($form, "categories");
+		$form = $this->fillFormWithFilter($form, "categories", "post");
 	}
 
 	private function fillPostFormWithoutSummary(Form $form): void
 	{
-		$form = $this->fillFormWithFilter($form, "summary");
+		$form = $this->fillFormWithFilter($form, "summary", "post");
 	}
 
 	private function fillPostFormWithoutContent(Form $form): void
 	{
-		$form = $this->fillFormWithFilter($form, "content");
+		$form = $this->fillFormWithFilter($form, "content", "post");
 	}
 
 	private function fillPostFormWithoutTitle(Form $form): void
 	{
-		$form = $this->fillFormWithFilter($form, "title");
+		$form = $this->fillFormWithFilter($form, "title", "post");
 	}
 
 	private function fillPostFormWithValidData(Form $form): void

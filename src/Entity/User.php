@@ -8,6 +8,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity()]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
@@ -17,12 +18,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 	#[ORM\Column]
 	private int $id;
 
+	#[Assert\NotBlank]
 	#[ORM\Column(unique: true)]
 	private string $username;
 
+	#[Assert\NotBlank]
 	#[ORM\Column]
 	private string $password;
 
+	#[Assert\NotBlank]
 	#[ORM\Column(unique: true)]
 	private string $email;
 

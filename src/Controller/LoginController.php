@@ -14,10 +14,13 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Form\FormInterface;
 use Doctrine\Persistence\ObjectRepository;
+use App\Tool\DatabaseHandler;
 
 
 class LoginController extends AbstractController
 {
+	use DatabaseHandler;
+
 	/**
 	 * @Route("/register", name="register")
 	 */
@@ -59,9 +62,7 @@ class LoginController extends AbstractController
 		$hashedPassword = $passwordHasher->hashPassword($user, $user->getPassword());
 		$user->setPassword($hashedPassword);
 
-		$entityManager = $doctrine->getManager();
-		$entityManager->persist($user);
-		$entityManager->flush();
+		$this->registerEntity($doctrine, $user);
 	}
 
 	#[Route("login/user/new/success", name: "user_successfully_created")]
