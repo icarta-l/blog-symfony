@@ -20,7 +20,7 @@ trait BaseSetupForWebTests
 	private function setUpUser($role = "user"): void
 	{
 		if ($role === "admin") {
-			$email = "test.admin@test.com";
+			$email = "admin@test.com";
 		} else {
 			$email = "test.user@test.com";
 		}
