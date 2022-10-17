@@ -17,10 +17,15 @@ trait BaseSetupForWebTests
 		$this->urlGenerator = $this->client->getContainer()->get("router.default");
 	}
 
-	private function setUpUser(): void
+	private function setUpUser($role = "user"): void
 	{
+		if ($role === "admin") {
+			$email = "test.admin@test.com";
+		} else {
+			$email = "test.user@test.com";
+		}
 		$this->userRepository = $this->client->getContainer()->get("doctrine.orm.entity_manager")->getRepository(User::class);
-		$this->user = $this->userRepository->findOneByEmail("test.user@test.com");
+		$this->user = $this->userRepository->findOneByEmail($email);
 		$this->client->loginUser($this->user);
 	}
 
