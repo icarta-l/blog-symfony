@@ -58,6 +58,15 @@ class AdminControllerWebTest extends WebTestCase
 		$this->assertSame(1, $crawler->filterXPath('//div[@class="category-successfully-created"]')->count());
 	}
 
+	public function testCreateCategoryRedirectsAfterSubmitting(): void
+	{
+		$this->setUpUser("admin");
+		$form = $this->getForm($this->categoryCreationRouteName, "Save");
+		$this->fillCategoryFormWithValidData($form);
+		$this->client->submit($form);
+		$this->assertResponseStatusCodeSame(Response::HTTP_FOUND);	
+	}
+
 	private function getCategoryCreationForm(): Form
 	{
 		return $this->getForm($this->categoryCreationRouteName, "Save");
