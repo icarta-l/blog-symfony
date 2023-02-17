@@ -7,7 +7,6 @@ use Symfony\Component\HttpFoundation\Request;
 
 trait PostWriter 
 {
-
 	private string $title = "Test";
 	private string $summary = "A fake summary to publish the post";
 	private array $categories = [3];

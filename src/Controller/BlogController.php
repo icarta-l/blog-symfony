@@ -3,9 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Post;
-use App\Entity\User;
 use App\Entity\Category;
-use App\Form\Type\PostType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,48 +11,63 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Doctrine\Persistence\ManagerRegistry;
 use App\Tool\DatabaseHandler;
-use Symfony\Component\Form\FormInterface;
+use App\Tool\FormHandler;
 
 class BlogController extends AbstractController
 {
-	use DatabaseHandler;
+	use DatabaseHandler, FormHandler;
 
+	/**
+	 * Create a new post
+	 */
 	#[Route("/blog/post/new", name: "create_post")]
 	public function createPost(Request $request, ManagerRegistry $doctrine): Response|RedirectResponse
 	{
 		$this->denyAccessUnlessGranted('ROLE_USER');
+		$this->doctrine = $doctrine;
 
-		$user = $this->getUser();
+		return $this->handlePostCreationResponse($request);
+	}
 
-		$form = $this->createForm(PostType::class);
-
-		$form->handleRequest($request);
-
-		if ($form->isSubmitted() && $form->isValid()) {
-			$this->getPostDataAndRegisterInDatabase($form, $user, $doctrine);
+	/**
+	 * Handle post creation response
+	 */
+	private function handlePostCreationResponse(Request $request): Response|RedirectResponse
+	{
+		if ($this->formIsValidAndSubmitted($request)) {
+			$this->getPostDataAndRegisterInDatabase();
 
 			return $this->redirectToRoute("post_successfully_created");
+		} else {
+			return $this->renderForm("blog/create-post.html.twig", [
+				"form" => $this->form,
+				"user" => $this->getUser()
+			]);
 		}
-
-		return $this->renderForm("blog/create-post.html.twig", [
-			"form" => $form,
-			"user" => $user
-		]);
 	}
 
-	private function getPostDataAndRegisterInDatabase(FormInterface $form, User $user, ManagerRegistry $doctrine): void
+	/**
+	 * Get post data and register in database
+	 */
+	private function getPostDataAndRegisterInDatabase(): void
 	{
-		$post = $form->getData();
-		$post->setRemainingProperties($user);
-		$this->registerEntity($doctrine, $post);
+		$post = $this->form->getData();
+		$post->setRemainingProperties($this->getUser());
+		$this->registerEntity($post);
 	}
 
+	/**
+	 * Render success page
+	 */
 	#[Route("blog/post/new/success", name: "post_successfully_created")]
 	public function postSuccessfullyCreated(Request $request, ManagerRegistry $doctrine): Response
 	{
 		return $this->render("blog/create-post-success.html.twig");
 	}
 
+	/**
+	 * List all posts
+	 */
 	#[Route("/blog", name: "print_all_posts")]
 	public function list(Request $request, ManagerRegistry $doctrine): Response
 	{
@@ -66,6 +79,9 @@ class BlogController extends AbstractController
 		]);
 	}
 
+	/**
+	 * Show a single post
+	 */
 	#[Route("/blog/post/{slug}", name: "print_post")]
 	public function show(Request $request, ManagerRegistry $doctrine, string $slug): Response
 	{

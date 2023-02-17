@@ -7,14 +7,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use App\Tests\Tools\BaseSetupForWebTests;
 use Symfony\Component\DomCrawler\Form;
+use App\Tests\Tools\CategoryWriter;
 
 class AdminControllerWebTest extends WebTestCase
 {
-	use BaseSetupForWebTests;
-
-	private $title = "Test";
-	private $description = "My awesome description";
-	private $fields = ["title", "description"];
+	use BaseSetupForWebTests, CategoryWriter;
 
 	private string $categoryCreationRouteName = "admin_create_category";
 
@@ -61,19 +58,27 @@ class AdminControllerWebTest extends WebTestCase
 	public function testCreateCategoryRedirectsAfterSubmitting(): void
 	{
 		$this->setUpUser("admin");
-		$form = $this->getForm($this->categoryCreationRouteName, "Save");
+		$form = $this->getCategoryCreationForm();
 		$this->fillCategoryFormWithValidData($form);
 		$this->client->submit($form);
 		$this->assertResponseStatusCodeSame(Response::HTTP_FOUND);	
 	}
 
-	private function getCategoryCreationForm(): Form
+	public function testCreateCategoryFailsWithoutTitle(): void
 	{
-		return $this->getForm($this->categoryCreationRouteName, "Save");
+		$this->setUpUser("admin");
+		$form = $this->getCategoryCreationForm();
+		$this->fillCategoryFormWithoutTitle($form);
+		$this->client->submit($form);
+		$this->assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
 	}
 
-	private function fillCategoryFormWithValidData(Form $form): void
+	public function testCreateCategoyFailsWithoutDescription(): void
 	{
-		$this->fillForm($form, "category");
+		$this->setUpUser("admin");
+		$form = $this->getCategoryCreationForm();
+		$this->fillCategoryFormWithoutDescription($form);
+		$this->client->submit($form);
+		$this->assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
 	}
 }

@@ -6,21 +6,24 @@ use App\Repository\CategoryRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity()]
-class Category
+class Category implements EntityInterface
 {
 	#[ORM\Id]
 	#[ORM\GeneratedValue]
 	#[ORM\Column]
 	private int $id;
 
+	#[Assert\NotBlank]
 	#[ORM\Column]
 	private string $title;
 
 	#[ORM\ManyToMany(targetEntity: Post::class, mappedBy: "categories")]
 	private $posts;
 
+	#[Assert\NotBlank]
 	#[ORM\Column]
 	private string $description;
 

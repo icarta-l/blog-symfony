@@ -2,16 +2,19 @@
 
 namespace App\Tool;
 
-use App\Entity\Post;
-use App\Entity\User;
-use App\Entity\Category;
+use App\Entity\EntityInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 trait DatabaseHandler
 {
-	public function registerEntity(ManagerRegistry $doctrine, Post|User|Category $entity): void
+	private ManagerRegistry $doctrine;
+
+	/**
+	 * Register an entity in the database
+	 */
+	public function registerEntity(EntityInterface $entity): void
 	{
-		$entityManager = $doctrine->getManager();
+		$entityManager = $this->doctrine->getManager();
 		$entityManager->persist($entity);
 		$entityManager->flush();
 	}

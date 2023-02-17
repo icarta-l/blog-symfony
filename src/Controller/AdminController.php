@@ -23,6 +23,7 @@ class AdminController extends AbstractController
 
 		$user = $this->getUser();
 
+		$this->doctrine = $doctrine;
 		$form = $this->createForm(CategoryType::class);
 
 		$form->handleRequest($request);
@@ -32,7 +33,7 @@ class AdminController extends AbstractController
 			$repository = $doctrine->getRepository(Category::class);
 
 			if ($repository->findOneBy(["title" => $category->getTitle()]) === null) {
-				$this->registerEntity($doctrine, $category);
+				$this->registerEntity($category);
 
 				return $this->redirectToRoute("category_successfully_created");
 

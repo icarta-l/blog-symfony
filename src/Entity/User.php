@@ -12,7 +12,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity()]
 #[ORM\Table(name: "users")]
-class User implements UserInterface, PasswordAuthenticatedUserInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface, EntityInterface
 {
 	#[ORM\Id]
 	#[ORM\GeneratedValue]
@@ -42,12 +42,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 		$this->posts = new ArrayCollection();
 	}
 
-	public function getId(): ?int
+	public function getId(): int
 	{
 		return $this->id;
 	}
 
-	public function getEmail(): ?string
+	public function getEmail(): string
 	{
 		return $this->email;
 	}

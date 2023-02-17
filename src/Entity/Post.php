@@ -9,7 +9,7 @@ use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity()]
-class Post
+class Post implements EntityInterface
 {
 	#[ORM\Id]
 	#[ORM\GeneratedValue]
