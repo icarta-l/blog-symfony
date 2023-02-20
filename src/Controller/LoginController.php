@@ -15,74 +15,92 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Form\FormInterface;
 use Doctrine\Persistence\ObjectRepository;
 use App\Tool\DatabaseHandler;
+use App\Tool\FormHandler;
 
 
 class LoginController extends AbstractController
 {
-	use DatabaseHandler;
+	use DatabaseHandler, FormHandler;
+
+	private UserPasswordHasherInterface $passwordHasher;
 
 	/**
-	 * @Route("/register", name="register")
+	 * Create a new user
 	 */
+	#[Route("/register", name: "register")]
 	public function register(Request $request, UserPasswordHasherInterface $passwordHasher, ManagerRegistry $doctrine): Response|RedirectResponse
 	{
-		$form = $this->createForm(UserType::class);
+		$this->doctrine = $doctrine;
+		$this->passwordHasher = $passwordHasher;
 
-		$form->handleRequest($request);
-
-		if ($form->isSubmitted() && $form->isValid()) {
-			$user_exists = $this->handleUserFormData($form, $doctrine, $passwordHasher);
-			if (!$user_exists) {
-				return $this->redirectToRoute("user_successfully_created");
-			}
-		}
-
-		return $this->renderForm("login/register.html.twig", [
-			"form" => $form,
-			"user_exists" => (isset($user_exists) && $user_exists === true) ? $user_exists : false
-		]);
+		return $this->handleUserCreationResponse($request);
 	}
 
-	private function handleUserFormData(FormInterface $form, ManagerRegistry $doctrine, UserPasswordHasherInterface $passwordHasher): bool
+	/**
+	 * Handle user creation response
+	 */
+	private function handleUserCreationResponse(Request $request): Response|RedirectResponse
 	{
-		$user = $form->getData();
-		$repository = $doctrine->getRepository(User::class);
-
-		if ($repository->findOneBy(["username" => $user->getUsername()]) === null) {
-			$this->registerNewUserInDatabase($passwordHasher, $user, $doctrine);
-
-			return false;
+		if ($this->formIsValidAndSubmitted($request, UserType::class) && !($user_exists = $this->handleUserFormData())) {
+			return $this->redirectToRoute("user_successfully_created");
 		} else {
-			return true;
+			return $this->renderForm("login/register.html.twig", [
+				"form" => $this->form,
+				"user_exists" => (isset($user_exists) && $user_exists === true) ? $user_exists : false
+			]);
 		}
 	}
 
-	private function registerNewUserInDatabase(UserPasswordHasherInterface $passwordHasher, User $user, ManagerRegistry $doctrine): void
+	/**
+	 * Get user form data and register in database if user does not exist
+	 */
+	private function handleUserFormData(): bool
 	{
-		$hashedPassword = $passwordHasher->hashPassword($user, $user->getPassword());
-		$user->setPassword($hashedPassword);
+		if ( !($user_exists = $this->userExistsInDatabase( ($user = $this->form->getData()) )) ) {
+			$this->registerNewUserInDatabase($user);
 
-		$this->registerEntity($doctrine, $user);
+			return $user_exists;
+		} else {
+			return $user_exists;
+		}
 	}
 
-	#[Route("login/user/new/success", name: "user_successfully_created")]
+	/**
+	 * Check if user exists in database
+	 */
+	private function userExistsInDatabase(User $user): bool
+	{
+		return $this->doctrine->getRepository(User::class)->findOneBy(["username" => $user->getUsername()]) !== null;
+	}
+
+	/**
+	 * Register new user in database with hashed password
+	 */
+	private function registerNewUserInDatabase(User $user): void
+	{
+		$user->setPassword($this->passwordHasher->hashPassword($user, $user->getPassword()));
+
+		$this->registerEntity($user);
+	}
+
+	/**
+	 * Render success page
+	 */
+	#[Route("/login/user/new/success", name: "user_successfully_created")]
 	public function userSuccessfullyCreated(Request $request): Response
 	{
 		return $this->render("login/create-user-success.html.twig");
 	}
 
 	/**
-	 * @Route("/login", name="login") 
+	 * Login existing user 
 	 */
+	#[Route("/login", name: "login")]
 	public function login(AuthenticationUtils $authenticationUtils): Response
 	{
-		$error = $authenticationUtils->getLastAuthenticationError();
-
-		$lastUsername = $authenticationUtils->getLastUsername();
-
 		return $this->render("login/index.html.twig", [
-			"last_username" => $lastUsername,
-			"error" => $error
+			"last_username" => $authenticationUtils->getLastUsername(),
+			"error" => $authenticationUtils->getLastAuthenticationError()
 		]);
 	}
 }

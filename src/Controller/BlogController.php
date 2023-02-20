@@ -59,7 +59,7 @@ class BlogController extends AbstractController
 	/**
 	 * Render success page
 	 */
-	#[Route("blog/post/new/success", name: "post_successfully_created")]
+	#[Route("/blog/post/new/success", name: "post_successfully_created")]
 	public function postSuccessfullyCreated(Request $request, ManagerRegistry $doctrine): Response
 	{
 		return $this->render("blog/create-post-success.html.twig");

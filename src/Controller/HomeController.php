@@ -11,14 +11,13 @@ use Symfony\Component\HttpFoundation\Response;
 class HomeController extends AbstractController
 {
 	/**
-	 * @Route("/", name="home")
+	 * Render home page
 	 */
+	#[Route("/", name: "home")]
 	public function index(): Response
-	{
-		$user = $this->getUser();
-		
+	{		
 		return $this->render("home/index.html.twig", [
-			"user" => $user
+			"user" => $this->getUser()
 		]);
 	}
 }
