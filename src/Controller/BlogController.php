@@ -71,11 +71,9 @@ class BlogController extends AbstractController
 	#[Route("/blog", name: "print_all_posts")]
 	public function list(Request $request, ManagerRegistry $doctrine): Response
 	{
-		$repository = $doctrine->getRepository(Post::class);
-		$posts = $repository->findAll();
-
 		return $this->render("blog/index.html.twig", [
-			"posts" => $posts
+			"posts" => $doctrine->getRepository(Post::class)->findAll(),
+			"categories" => $doctrine->getRepository(Category::class)->findAll()
 		]);
 	}
 
