@@ -5,29 +5,29 @@
 		</div>
 		<nav class="main-navigation">
 			{% set links = [] %}
-				{% if user is not defined or user == false %}
-					{% set links = links|merge(
-					[
-					{"name": "Login", "route": "login"},
-					{"name": "Register", "route": "register"}
-					]) %}
-				{% endif %}
 				{% set links = links|merge([
 				{"name": "Posts", "route": "print_all_posts"}
 				]) %}
 
 				{% if user is defined and user and "ROLE_ADMIN" in user.roles %}
 					{% set links = links|merge([
-					{"name": "Admin", "route": false}
+					{"name": "Category", "route": "admin_create_category"}
 					]) %}
 				{% endif %}
 
 				{% if user is defined and user %}
 					{% set links = links|merge([
+					{"name": "Write", "route": "create_post"},
 					{"name": "Logout", "route": "/logout"}
 					]) %}
 				{% endif %}
-
+				{% if user is not defined or user == false %}
+					<div>
+						<a href="{{ path("login") }}" class="main-navigation-link">Sign In</a>
+						 | 
+						<a href="{{ path("register") }}" class="main-navigation-link">Sign Up</a>
+					</div>
+				{% endif %}
 				{% for link in links %}
 					{% if link.route == "/logout" %}
 						<a href="{{ logout_path() }}" class="main-navigation-link">{{ link.name }}</a>

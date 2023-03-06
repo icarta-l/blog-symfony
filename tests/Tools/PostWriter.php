@@ -9,7 +9,7 @@ trait PostWriter
 {
 	private string $title = "Test";
 	private string $summary = "A fake summary to publish the post";
-	private array $categories = [3];
+	private array $categories = [58];
 	private string $content = "Here is my fake new content to test the post publishing logic";
 	private array $fields = ["title", "summary", "categories", "content"];
 

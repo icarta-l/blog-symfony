@@ -27,6 +27,9 @@ class Category implements EntityInterface
 	#[ORM\Column]
 	private string $description;
 
+	#[ORM\Column]
+	private string $slug;
+
 	public function __construct()
 	{
 		$this->posts = new ArrayCollection();
@@ -42,7 +45,7 @@ class Category implements EntityInterface
 		return $this->title;
 	}
 
-	public function setTitle(string $title)
+	public function setTitle(string $title): self
 	{
 		$this->title = $title;
 
@@ -79,6 +82,23 @@ class Category implements EntityInterface
 	public function setDescription(string $description): self
 	{
 		$this->description = $description;
+
+		return $this;
+	}
+
+	public function generateSlug(): string
+	{
+		return \strtolower(\str_replace(" ", "-", $this->getTitle()));
+	}
+
+	public function getSlug(): string
+	{
+		return $this->slug;
+	}
+
+	public function setSlug(string $slug): self
+	{
+		$this->slug = $slug;
 
 		return $this;
 	}

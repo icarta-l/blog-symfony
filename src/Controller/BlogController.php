@@ -62,7 +62,7 @@ class BlogController extends AbstractController
 	#[Route("/blog/post/new/success", name: "post_successfully_created")]
 	public function postSuccessfullyCreated(Request $request, ManagerRegistry $doctrine): Response
 	{
-		return $this->render("blog/create-post-success.html.twig");
+		return $this->render("blog/create-post-success.html.twig", ["user" => $this->getUser()]);
 	}
 
 	/**
@@ -73,7 +73,8 @@ class BlogController extends AbstractController
 	{
 		return $this->render("blog/index.html.twig", [
 			"posts" => $doctrine->getRepository(Post::class)->findAll(),
-			"categories" => $doctrine->getRepository(Category::class)->findAll()
+			"categories" => $doctrine->getRepository(Category::class)->findAll(),
+			"user" => $this->getUser()
 		]);
 	}
 
