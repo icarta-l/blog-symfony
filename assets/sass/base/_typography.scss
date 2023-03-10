@@ -6,6 +6,10 @@ body {
 
 /* Typography - Colors */
 
+.post {
+	color: black;
+}
+
 .main-navigation-link, .blog-link, .title {
 	color: $secondary_color;
 }
@@ -18,7 +22,7 @@ body {
 
 /* Typography - Font Style */
 
-.main-navigation-link, .blog-link {
+.main-navigation-link, .blog-link, .post {
 	text-decoration: none;
 }
 

@@ -13,11 +13,13 @@
 --------------------------------------------------------------*/
 @import "layouts/header";
 @import "layouts/navigation";
+@import "layouts/post-grid";
 
 /*--------------------------------------------------------------
 # Components
 --------------------------------------------------------------*/
-//@import "components/components";
+@import "components/form";
+@import "components/post";
 
 /*--------------------------------------------------------------
 # Pages

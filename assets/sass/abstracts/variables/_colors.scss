@@ -1,6 +1,12 @@
+@use "sass:color";
+
 // Theme colors
 $main_color: #7d95b3;
 $secondary_color: #3a2e4a;
 
 // Typography colors
 $text_on_color: white;
+$font-color__primary: black;
+
+// Box shadows
+$color-box-shadow__primary: color.adjust($main_color, $alpha: -0.7);
