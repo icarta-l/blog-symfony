@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Doctrine\Persistence\ManagerRegistry;
 use App\Tool\DatabaseHandler;
 use App\Tool\FormHandler;
+use App\Roles\Role;
 
 class AdminController extends AbstractController
 {
@@ -23,7 +24,7 @@ class AdminController extends AbstractController
 	#[Route("/admin/category/new", name: "admin_create_category")]
 	public function createCategory(Request $request, ManagerRegistry $doctrine): Response|RedirectResponse
 	{
-		$this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'User tried to access a page without having ROLE_ADMIN');
+		$this->denyAccessUnlessGranted(Role::ADMIN->value, null, "User tried to access a page without having " . Role::ADMIN->value);
 
 		$this->doctrine = $doctrine;
 

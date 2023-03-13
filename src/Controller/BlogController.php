@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Doctrine\Persistence\ManagerRegistry;
 use App\Tool\DatabaseHandler;
 use App\Tool\FormHandler;
+use App\Roles\Role;
 
 class BlogController extends AbstractController
 {
@@ -23,7 +24,7 @@ class BlogController extends AbstractController
 	#[Route("/blog/post/new", name: "create_post")]
 	public function createPost(Request $request, ManagerRegistry $doctrine): Response|RedirectResponse
 	{
-		$this->denyAccessUnlessGranted('ROLE_USER');
+		$this->denyAccessUnlessGranted(Role::USER->value);
 		$this->doctrine = $doctrine;
 
 		return $this->handlePostCreationResponse($request);
@@ -72,10 +73,22 @@ class BlogController extends AbstractController
 	public function list(Request $request, ManagerRegistry $doctrine, string $slug = "all"): Response
 	{
 		return $this->render("blog/index.html.twig", [
-			"posts" => $doctrine->getRepository(Post::class)->findAll(),
+			"posts" => $this->getPostsOnListPage($doctrine, $slug),
 			"categories" => $doctrine->getRepository(Category::class)->findAllCategoriesWithAtLeastOnePost(),
 			"user" => $this->getUser()
 		]);
+	}
+
+	/**
+	 * Get posts on list page
+	 */
+	private function getPostsOnListPage(ManagerRegistry $doctrine, string $slug): array
+	{
+		if ($slug === "all") {
+			return $doctrine->getRepository(Post::class)->findAll();
+		} else {
+			return $doctrine->getRepository(Post::Class)->findAllPostsByCategory($slug);
+		}
 	}
 
 	/**
