@@ -13,7 +13,7 @@ trait FormHandler
     /**
 	 * Handle form creation, submission and validation in controller
 	 */
-	public function formIsValidAndSubmitted(Request $request, string $form_class = PostType::class): bool
+	public function isFormValidAndSubmitted(Request $request, string $form_class = PostType::class): bool
 	{
 		$this->form = $this->createForm($form_class)->handleRequest($request);
 

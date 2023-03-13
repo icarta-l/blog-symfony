@@ -34,7 +34,7 @@ class BlogController extends AbstractController
 	 */
 	private function handlePostCreationResponse(Request $request): Response|RedirectResponse
 	{
-		if ($this->formIsValidAndSubmitted($request)) {
+		if ($this->isFormValidAndSubmitted($request)) {
 			$this->getPostDataAndRegisterInDatabase();
 
 			return $this->redirectToRoute("post_successfully_created");

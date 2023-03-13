@@ -41,7 +41,7 @@ class LoginController extends AbstractController
 	 */
 	private function handleUserCreationResponse(Request $request): Response|RedirectResponse
 	{
-		if ($this->formIsValidAndSubmitted($request, UserType::class) && !($user_exists = $this->handleUserFormData())) {
+		if ($this->isFormValidAndSubmitted($request, UserType::class) && !($user_exists = $this->handleUserFormData())) {
 			return $this->redirectToRoute("user_successfully_created");
 		} else {
 			return $this->renderForm("login/register.html.twig", [

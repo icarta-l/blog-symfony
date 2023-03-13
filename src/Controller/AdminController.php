@@ -35,7 +35,7 @@ class AdminController extends AbstractController
 	 */
 	private function handleCategoryCreationResponse(Request $request): Response|RedirectResponse
 	{
-		if ($this->formIsValidAndSubmitted($request, CategoryType::class) && ($category_is_new = $this->categoryIsNew())) {
+		if ($this->isFormValidAndSubmitted($request, CategoryType::class) && ($category_is_new = $this->categoryIsNew())) {
 			$this->generateCategorySlug(($category = $this->form->getData()));
 			$this->registerEntity($category);
 
