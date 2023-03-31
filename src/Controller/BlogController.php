@@ -97,11 +97,9 @@ class BlogController extends AbstractController
 	#[Route("/blog/post/{slug}", name: "print_post")]
 	public function show(Request $request, ManagerRegistry $doctrine, string $slug): Response
 	{
-		$repository = $doctrine->getRepository(Post::class);
-		$post = $repository->findOneBy(["slug" => $slug]);
-
 		return $this->render("blog/single-post.html.twig", [
-			"post" => $post
+			"post" => $doctrine->getRepository(Post::class)->findOneBy(["slug" => $slug]),
+			"user" => $this->getUser()
 		]);
 	}
 }
